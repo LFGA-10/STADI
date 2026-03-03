@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import confetti from 'canvas-confetti'
 import LandingPage from './LandingPage'
+import AuthPage from './AuthPage'
 import './App.css'
 
 // Reusable Circular Progress SVG Component
@@ -208,7 +209,8 @@ const WeeklyTracker = () => {
 
 // Main App Layout
 function App() {
-  const [showApp, setShowApp] = useState(false);
+  const [appRoute, setAppRoute] = useState('landing'); // 'landing', 'auth', 'dashboard'
+  const [authMode, setAuthMode] = useState('signup'); // 'signup', 'login'
   const [activeTab, setActiveTab] = useState('analytics'); // Default to our new tab to show it off
   const [time, setTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
@@ -219,8 +221,17 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
-  if (!showApp) {
-    return <LandingPage onEnterApp={() => setShowApp(true)} />;
+  const handleNavigateAuth = (mode) => {
+    setAuthMode(mode);
+    setAppRoute('auth');
+  };
+
+  if (appRoute === 'landing') {
+    return <LandingPage onEnterApp={() => setAppRoute('dashboard')} onNavigateAuth={handleNavigateAuth} />;
+  }
+
+  if (appRoute === 'auth') {
+    return <AuthPage mode={authMode} onBack={() => setAppRoute('landing')} onEnterApp={() => setAppRoute('dashboard')} />;
   }
 
   return (
